@@ -490,7 +490,7 @@ function loadTrack(i, autoplay=false){
   setActiveTrack(i);
   progFill.style.width='0%';
   tCur.textContent='0:00';
-  tTot.textContent='0:30';
+  
   if(autoplay){ audio.play().then(()=>{isPlaying=true;updatePlayUI();}).catch(()=>{}); }
 }
 
@@ -521,6 +521,7 @@ document.getElementById('btn-prev').addEventListener('click',()=>{
 audio.addEventListener('play',()=>{ isPlaying=true; updatePlayUI(); });
 audio.addEventListener('pause',()=>{ isPlaying=false; updatePlayUI(); });
 audio.addEventListener('ended',()=>{ loadTrack((cur+1)%songs.length, true); });
+audio.addEventListener('loadedmetadata',()=>{tTot.textContent=fmt(audio.duration);});
 audio.addEventListener('timeupdate',()=>{
   const pct = audio.duration ? audio.currentTime/audio.duration*100 : 0;
   progFill.style.width = pct+'%';
@@ -575,7 +576,8 @@ function unlock(){
   shootConfetti();
   spawnPetals();
   // auto-play first song
-  setTimeout(()=>loadTrack(0,true), 900);
+  loadTrack(0);
+  audio.play().then(()=>{isPlaying=true;updatePlayUI();}).catch(console.log);
 }
 
 /* ── NAV ── */
